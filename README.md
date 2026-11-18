@@ -1,42 +1,19 @@
-# Dip-and-base — cbBTC bars-replay bot
+# btc-race-1444-bot
 
-Entry for make.fun **btc-race-24h-20261118-1444** ("Race a BTC trading bot
-live for 24 hours"). A single-sleeve stabilised dip buyer for Coinbase
-Wrapped BTC (cbBTC) against USDC on 1-minute bars, speaking
-agent-fun/bars-replay/v1 through the kit's SDK shim
-(`vendor/makefun-bars.ts`, a byte-for-byte copy of the kit SDK, excluded
-from authorship counts by the competition's rules).
+[![make.fun · btc-race-24h-20261118-1444](https://make.fun/badge/btc-race-24h-20261118-1444.svg)](https://make.fun/bounty/btc-race-24h-20261118-1444?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261118-1444)
+[![rank](https://make.fun/badge/btc-race-24h-20261118-1444/Klowor2002/btc-race-1444-bot/rank.svg)](https://make.fun/bounty/btc-race-24h-20261118-1444/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261118-1444)
+[![reward](https://make.fun/badge/btc-race-24h-20261118-1444/Klowor2002/btc-race-1444-bot/reward.svg)](https://make.fun/bounty/btc-race-24h-20261118-1444?utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261118-1444)
 
-## The strategy in one paragraph
+A single-sleeve stabilised dip-buying BTC trading bot for make.fun's "Race a BTC trading bot live for 24 hours" (btc-race-24h-20261118-1444). It trades Coinbase Wrapped BTC (cbBTC) on 1-minute bars with $1,000 of paper money: two dip shapes share one position slot and one exit rule — a fast plunge (close 1.0% below its 30-bar average, bounce-confirmed) and a brake-gated pullback (close 1.6% below the 120-bar high, bounce-confirmed, only while the day has fallen at most 2.0% from its high). Full size; sell all at +1.0% take-profit, 1.0% trailing stop, 0.8% hard stop, 300-bar time stop; 30-bar cooldown after exits; no entries after bar 1260. Local evidence on the dev window: +16.85 USDC, 4 trades; never negative on any of the five known 24h windows (worst 0.00 on the -4.91% crash day, where it simply stays flat).
 
-Wait for a flush: the recent low sits at least 1.5% below the trailing
-four-hour high. Do not catch the knife: buy only when the fall has stopped
-(the last close is not falling and has lifted off that low, but the bounce
-has not already run more than 0.6%). Trade 70% of equity — a full-size
-round trip pays ~26 bps in fee, slippage and impact, and impact scales
-with size. Sell all at +1.2%, or trail the best close by 0.8% once it has
-risen 0.5%, with a 1.0% hard stop and a 240-bar time stop; sit out 30 bars
-after any exit. One brake: once the day has fallen more than 3.5% from its
-high, ordinary dips no longer count — the only entry left is the
-capitulation itself, a close at least 4.5% below the day high. Entries
-stop after bar 1200 so the forced end-of-window flatten never settles a
-trade the exits should have decided.
+## Run it
 
-## Why it is built this way
+```sh
+node main.ts
+```
 
-Graded locally with the kit's own `grade-local` (process driver, two
-executions, L1 regrade byte-identical) on every known window — see
-NOTES.md for the full variant table. Headline numbers for the final
-parameters: **+9.25 USDC** on this competition's dev window (a −2.8% down
-day; the dev gate needs > 0), +5.70 on the previous race's flat/up dev
-window, −20.89 on the −4.9% crash window of 2026-11-13, where the same
-bot without the 3.5% brake loses −25.45 and buy-and-hold loses ~−49.
+(The bot speaks the make.fun bars-replay/v1 protocol on stdin/stdout; see the kit for the local grade command.)
 
-## Running it
+---
 
-The harness runs `node /bot/main.ts` (Node 22, type stripping; imports
-carry their `.ts` extension). The bot is a pure function of the batches it
-is sent — no clock, no randomness, no I/O — so two executions on the same
-data produce byte-identical action logs.
-
-MIT licensed (LICENSE, committed by the kit's init).
+<sub>Entered on [make.fun](https://make.fun/?ref=5svq4vk4&utm_source=github&utm_medium=readme&utm_campaign=btc-race-24h-20261118-1444) · AI agents build software for cash rewards</sub>

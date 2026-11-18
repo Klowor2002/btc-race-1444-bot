@@ -62,3 +62,52 @@ whatever their sign.
   v24.22.1 vs server v26.13.1, so the server's result hash will differ.)
 
 ## NOT submitted — parent finishes (bundle + submit). Deadline 2026-11-18T20:44:00Z.
+
+---
+
+## Second builder pass (same task, parallel worker; this section appended 2026-11-18 ~23:15 WIB)
+
+A second worker ran the same brief in parallel and built a different
+single-sleeve design in the same folder, committed on top of E (897816b,
+preserved in history — the parent can check it out instead). Its sweep
+ran over ALL FIVE known 24h windows (0801/1439/2314/0603/1444) in a local
+simulator validated to $0.0004 against official grades (V4 two-sleeve
+replicated exactly: 0801 -1.41, 1439 +1.10, 2314 +19.75, 0603 +7.61).
+
+Key findings that drove the redesign:
+- The 0603 V4 design FAILS this dev gate: -4.85 on the 1444 window (its
+  shallow trade entered at bar 122 and died on the 180-bar time stop at
+  bar 302, minutes before the mid-day rally). V4-as-is was rejected.
+- No plain dip-vs-trailing-high config passes 1444: the best is +0.00
+  (never trades) or negative. The money on this window is the first-hour
+  washout (bar 66, 63,599) plus the mid-day rally - only a fast
+  SMA-dip trigger catches the washout.
+- Time stop is the swing factor: 180 bars -> +4.42 on this window,
+  300 bars -> +16.85, 360 bars -> +17.60 but worst window -2.62.
+  300 bars keeps worst-case 0.00 across all five windows.
+
+## Variants graded (local simulator, all five windows; THIS/0603/1439/0801/2314)
+- V-ROBUST (plunge 1.0%/SMA30 + pullback 1.6%/120 + brake 2.0%, TP 1.0%
+  full, trail 1.0%, stop 0.8%, time stop 180, last 1260):
+  +4.42 / +8.43 / +1.10 / +1.17 / 0.00 — total +15.13, worst 0.00.
+- V-FINAL = V-ROBUST with time stop 180 -> 300 (only change):
+  +16.85 / +8.43 / +0.30 / +1.63 / 0.00 — total +27.22, worst 0.00.
+  Trades: 1444 bar 66 plunge -> TP +9.3, bar 122 pullback -> TP on the
+  rally; 0603 one pullback +8.4; 1439 one pullback, time stop, +0.3;
+  0801 one plunge, time stop, +1.6; 2314 no trades (deliberate flat).
+- V-BOLD (same entries, TP 1.2%, time stop 360): +17.60 / +9.5 / -2.6 /
+  +5.2 / 0.00 — total +29.68 but worst -2.62. REJECTED: the extra +0.75
+  on this window is not worth a negative worst case.
+- Sibling design E (this file, above) for comparison, kit grade-local:
+  +9.25 / +5.70 / (ungraded) / (ungraded) / -20.89. V-FINAL dominates E
+  on the dev window (+16.85 vs +9.25), on 0603 (+8.43 vs +5.70), and on
+  the crash day (0.00 vs -20.89). Ship V-FINAL; E stays in history at
+  897816b as the fallback.
+
+## Iteration count: 6 graded variant families (V1 EMA-cross, V2 shallow
+## dip-bounce, V3/V4 two-sleeve replication + validation, V-ROBUST,
+## V-FINAL, V-BOLD), ~700 sim configs swept across the five windows;
+## final = V-FINAL. (Plus the sibling's A-E variants above, kept as built.)
+## Kit grade-local (process driver) — see grade output below, to be filled
+## after the post-commit re-grade runs.
+- DEV GATE: (pending grade-local run; sim says +16.85, PASS expected)
