@@ -108,6 +108,17 @@ Key findings that drove the redesign:
 ## dip-bounce, V3/V4 two-sleeve replication + validation, V-ROBUST,
 ## V-FINAL, V-BOLD), ~700 sim configs swept across the five windows;
 ## final = V-FINAL. (Plus the sibling's A-E variants above, kept as built.)
-## Kit grade-local (process driver) — see grade output below, to be filled
-## after the post-commit re-grade runs.
-- DEV GATE: (pending grade-local run; sim says +16.85, PASS expected)
+## Kit grade-local (process driver) — CONFIRMED 2026-11-18 ~23:35 WIB
+- V-FINAL (this commit): net PnL **+16.850249 USDC**, 4 trades, win rate
+  1.0, max drawdown 0.8872794%, fees 1.614536 USDC (at 2x fees
+  +15.227547), guardrails met, 0 rejected. L1 regrade reproduced byte
+  for byte; second full run identical (same action log + result hash).
+  action_log_sha256 25dbb635aac2ab8cf31c1f2a9c2a755151c245580ae4d7191bf75a54c685e09d
+  result_sha256 d417f7e1399b5212cdc1a36ec08139ef85a854a88a86f1de35fcf8b890f8d92f
+  (local node v24.22.1 vs server v26.13.1, so the server's result hash
+  will differ; the PnL is pure float64 arithmetic and reproduces.)
+- V-ROBUST (time stop 180, --worktree variant): net PnL +4.422126 USDC,
+  4 trades, win rate 0.5, maxDD 0.887%, fees 1.609563 (2x fees +2.819475),
+  guardrails met, L1 byte-identical. Sim predictions matched kit grades
+  to the cent on BOTH variants (+16.85 / +4.42) - the simulator is exact.
+- DEV GATE: PASS (+16.85 > $0, margin $16.85).
